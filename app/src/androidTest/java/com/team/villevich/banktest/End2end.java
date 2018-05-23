@@ -24,7 +24,7 @@ public class End2end {
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        mDevice.pressHome();
+
     }
 
     @Test
@@ -126,8 +126,7 @@ public class End2end {
 
     @Test
     public void ownTransfer() throws UiObjectNotFoundException, InterruptedException {
-        UiObject appButton1 = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
-        appButton1.click();
+
         UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_menu"));
         sideMenu.clickAndWaitForNewWindow();
 
@@ -160,8 +159,6 @@ public class End2end {
     }
     @Test
     public void Payment() throws UiObjectNotFoundException, InterruptedException {
-        UiObject appButton1 = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
-        appButton1.click();
 
         UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_menu"));
         sideMenu.clickAndWaitForNewWindow();
