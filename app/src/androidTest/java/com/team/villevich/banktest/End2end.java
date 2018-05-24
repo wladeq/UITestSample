@@ -65,6 +65,7 @@ public class End2end {
         loginInput.setText("kkinglog1");
         UiObject next = mDevice.findObject(new UiSelector().textMatches("NEXT STEP"));
         next.click();
+
         mDevice.pressHome();
         UiObject messages = mDevice.findObject(new UiSelector().textMatches("Wiadomości"));
         messages.clickAndWaitForNewWindow(100);
@@ -191,7 +192,7 @@ public class End2end {
 
 
         UiObject ibanNumber = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/et_account_number"));
-        ibanNumber.setText("GI21NWBK000001690890930");
+        ibanNumber.setText("GI35NWBK000001263422930");
 
         UiObject title = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_payment_title"));
         title.setText(generateString());
@@ -218,8 +219,9 @@ public class End2end {
         mDevice.click(100,900);
 
         //temporary
-        UiObject closeError = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_dialog_close"));
-        closeError.click();
+        UiObject okBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_dialog_ok"));
+        okBtn.click();
+        TimeUnit.SECONDS.sleep(1);
 
     }
     public static String generateString() {
