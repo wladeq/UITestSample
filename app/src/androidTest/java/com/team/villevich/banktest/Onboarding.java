@@ -32,8 +32,8 @@ public class Onboarding {
 
     @Test
     public void register() throws InterruptedException, UiObjectNotFoundException {
-        UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_register"));
-        sideMenu.clickAndWaitForNewWindow();
+        UiObject registerBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_register"));
+        registerBtn.clickAndWaitForNewWindow();
 
         //FIRST PAGE------------------------------------------------------------------------------------------------------------
         UiObject selectAll = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_UI__V_E_SELECT_ALL_PRODUCTS__Q__Text"));
@@ -164,7 +164,6 @@ public class Onboarding {
         UiScrollable scroll7 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
         scroll7.scrollForward();
         TimeUnit.SECONDS.sleep(1);
-        ////////////////////////////////////////////
 
         try {
             UiObject postalCode = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_RES_POSTAL_CODE"));

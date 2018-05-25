@@ -22,7 +22,7 @@ public class End2end {
     private String KLIENT_NAME = "ADAM";
     private String KLIENT_SURNAME = "ADAMMM";
     private String KLIENT_EMAIL = "hjhgfs23fg@gf.asf";
-    private String KLIENT_LOGIN = "usejj4gj99";
+    private String KLIENT_LOGIN = "us23h360ghv";
 
     @Before
     public void startMainActivityFromHomeScreen() {
@@ -68,11 +68,8 @@ public class End2end {
 
     @Test
     public void register() throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        UiObject appButton1 = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
-        appButton1.click();
-        TimeUnit.SECONDS.sleep(6);
-        UiObject register = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_register"));
-        register.clickAndWaitForNewWindow();
+        UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_register"));
+        sideMenu.clickAndWaitForNewWindow();
 
         //FIRST PAGE------------------------------------------------------------------------------------------------------------
         UiObject selectAll = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_UI__V_E_SELECT_ALL_PRODUCTS__Q__Text"));
@@ -102,20 +99,18 @@ public class End2end {
         UiObject emailConfirm = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_EMAIL_REPEATED"));
         emailConfirm.setText(KLIENT_EMAIL);
         TimeUnit.SECONDS.sleep(1);
-        UiObject callingCode = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_MOBILE_PHONE_CODE"));
-        callingCode.click();
-
-        try {
+        try{
+            UiObject callingCode = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_MOBILE_PHONE_CODE"));
+            callingCode.click();
             UiObject callingCodeSelect = mDevice.findObject(new UiSelector().text("Poland (+48)"));
             callingCodeSelect.click();
-        } catch (UiObjectNotFoundException e) {
-            UiScrollable scroll2 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
-            scroll2.scrollForward();
+        } catch (UiObjectNotFoundException e){
+            mDevice.pressBack();
+            UiObject callingCode = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_MOBILE_PHONE_CODE"));
             callingCode.click();
             UiObject callingCodeSelect = mDevice.findObject(new UiSelector().text("Poland (+48)"));
             callingCodeSelect.click();
         }
-
         UiObject phoneNumber = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_MOBILE_PHONE_NUMBER"));
         phoneNumber.setText("501464633");
         UiScrollable scroll2 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
@@ -131,7 +126,7 @@ public class End2end {
         TimeUnit.SECONDS.sleep(2);
         UiObject messages1 = mDevice.findObject(new UiSelector().textContains("Golden Sand").className("android.widget.TextView"));
         messages1.click();
-        TimeUnit.SECONDS.sleep(3);
+        TimeUnit.SECONDS.sleep(30);
         mDevice.click(529,964);
 
         String copyText = null;
@@ -144,8 +139,7 @@ public class End2end {
             UiObject codeField = mDevice.findObject(new UiSelector().resourceId("android:id/alertTitle"));
             copyText = codeField.getText();
         }
-        mDevice.pressBack();
-        mDevice.pressBack();
+
         mDevice.pressHome();
         UiObject appButton = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
         appButton.click();
@@ -201,21 +195,12 @@ public class End2end {
         addresCountry2.setText(generateString());
         UiObject addresStreet = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_RES_STREET"));
         addresStreet.setText(generateString());
-
-        try {
-            UiObject addresStreetNumber = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_RES_STREET_NO"));
-            addresStreetNumber.setText("13");
-        } catch (UiObjectNotFoundException e){
-            UiScrollable scroll8 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
-            scroll8.scrollForward();
-            UiObject addresStreetNumber = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_RES_STREET_NO"));
-            addresStreetNumber.setText("13");
-        }
-
+        UiObject addresStreetNumber = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_RES_STREET_NO"));
+        addresStreetNumber.setText("13");
         UiScrollable scroll7 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
         scroll7.scrollForward();
         TimeUnit.SECONDS.sleep(1);
-
+        ////////////////////////////////////////////
 
         try {
             UiObject postalCode = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_RES_POSTAL_CODE"));
@@ -256,9 +241,10 @@ public class End2end {
         contactLeng.click();
         UiObject next5 = mDevice.findObject(new UiSelector().text("Next"));
         next5.click();
-        TimeUnit.SECONDS.sleep(5);
+        TimeUnit.SECONDS.sleep(3);
 
         //FIFTH PAGE------------------------------------------------------------------------------------------------------------
+        TimeUnit.SECONDS.sleep(2);
         UiScrollable scroll12 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
         scroll12.scrollForward();
         scroll12.scrollForward();
@@ -272,10 +258,8 @@ public class End2end {
         checkBox3.click();
         UiScrollable scroll14 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
         scroll14.scrollForward();
-
-        UiObject checkBox4 = mDevice.findObject(new UiSelector().text("I accept all of the following statements"));
+        UiObject checkBox4 = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_UI__V_E_STATEMENT_TMM__Q__Text"));
         checkBox4.click();
-
         UiScrollable scroll15 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
         scroll15.scrollForward();
         UiObject checkBox5 = mDevice.findObject(new UiSelector().textStartsWith("In the event that the Bank intends"));
@@ -377,7 +361,7 @@ public class End2end {
 
     }
 
-    //@Test
+    @Test
     public void ownTransfer() throws UiObjectNotFoundException, InterruptedException {
 
         UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_menu"));
@@ -410,7 +394,7 @@ public class End2end {
         okBtn.click();
         TimeUnit.SECONDS.sleep(1);
     }
-    //@Test
+    @Test
     public void Payment() throws UiObjectNotFoundException, InterruptedException {
 
         UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_menu"));
