@@ -2,6 +2,7 @@ package com.team.villevich.banktest.RegressTC;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.uiautomator.BySelector;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
@@ -29,13 +30,23 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class SecondFlow {
+
     private UiDevice mDevice;
     private String LOGIN_ENTER_PASSCODE = "Enter your passcode",
             DASHBOARD_BAR_TITLE = "GOLDEN SAND BANK",
             TRANSFER_BAR_TITLE = "TRANSFER",
             PAYMENT_BAR_TITLE = "PAYMENT",
+            FILTERS_BAR_TITLE = "FILTERS",
+            PRODUCT_BAR_TITLE = "PRODUCT",
+            TRANSACTIONS_BAR_TITLE = "TRANSACTIONS",
+            TRANSACTION_TYPE_TITLE_BAR_TITLE = "TRANSACTION TYPE",
+            GBP_PERSONAL_NUMBER = "61 NWBK 0000 0100 0059 120",
+            USD_PERSONAL_NUMBER = "08 NWBK 0000 0127 9782 660",
 
-        // @@ USE ACC NUMBER ONLY WITHOUT SPACES OR CHANGE TEST CODE @@
+         // One of the accounts must be without any transactions (For one of the TC)
+            EUR_SAVING_NUMBER = "06 NWBK 0000 0100 0059 140",
+
+         // USE ACC NUMBER FOR PAYMENT ONLY WITHOUT SPACES OR CHANGE TEST CODE //
             ACC_NUMBER_PAYMENT = "GI35NWBK000001263422930",
 
             TITLE_PAYMENT = "Napiwki",
@@ -89,8 +100,8 @@ public class SecondFlow {
     //@Test
     public void test2() throws InterruptedException, UiObjectNotFoundException {
         String datePayment;
-        //WCHODZIMY DO TRANSFER PRZEZ BOCZNE MENU
 
+        //WCHODZIMY DO TRANSFER PRZEZ BOCZNE MENU
         try{
             UiObject topBarDashboard = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
             assertThat(DASHBOARD_BAR_TITLE, is(equalTo(topBarDashboard.getText())));
@@ -200,8 +211,8 @@ public class SecondFlow {
         }
     }
 
-    //PAYEMNT
-    //@Test
+    //PAYMENT
+    @Test
     public void test3() throws UiObjectNotFoundException, InterruptedException {
         String datePayment;
         UiObject topBarDashboard = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
@@ -429,24 +440,128 @@ public class SecondFlow {
     //Filter test
     @Test
     public void test4() throws InterruptedException, UiObjectNotFoundException {
-        UiObject topBarDashboard = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
+
+        UiObject toolbarTitle = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
         try{
-            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(topBarDashboard.getText())));
+            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
         } catch( UiObjectNotFoundException e){
             TimeUnit.SECONDS.sleep(2);
-            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(topBarDashboard.getText())));
+            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
         }
+
+        //Transactions screen
         UiObject transactionBottomMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_transactions"));
         transactionBottomMenu.click();
 
         TimeUnit.SECONDS.sleep(3);
-        UiObject topBarTransactions = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
         try{
-            topBarTransactions.isFocusable();
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+            toolbarTitle.isFocusable();
         } catch (UiObjectNotFoundException e){
             TimeUnit.SECONDS.sleep(2);
-            topBarTransactions.isFocusable();
+            toolbarTitle.isFocusable();
         }
-    }
 
+        //Filters screen
+        UiObject topBarFilerIcon = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/menu_filter"));
+        topBarFilerIcon.click();
+        TimeUnit.SECONDS.sleep(1);
+
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+
+        //Find all necessary objects on the filters screen
+        UiObject filterProductsBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/iv_filter_product_arrow"));
+        UiObject filterDate1M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_1m"));
+        UiObject filterDate3M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_3m"));
+        UiObject filterDate6M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_6m"));
+        UiObject filterDate12M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_12m"));
+        UiObject filterDateOther = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_other"));
+        UiObject filterDateOtherFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_from_content"));
+        UiObject filterDateOtherTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_to_content"));
+        UiObject filterFundsIncoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_incoming"));
+        UiObject filterFundsOutcoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_outcoming"));
+        UiObject filterAmountFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/et_amount_from_content"));
+        UiObject filterAmountTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/et_amount_to_content"));
+        UiObject filterTransType = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cirv_type"));
+        UiObject filterClearFilters = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/ll_clear"));
+        UiObject productPersonalGBP = mDevice.findObject(new UiSelector().text(GBP_PERSONAL_NUMBER));
+        UiObject productPersonalUSD = mDevice.findObject(new UiSelector().text(USD_PERSONAL_NUMBER));
+        UiObject productSavingEmptyEUR = mDevice.findObject(new UiSelector().text(EUR_SAVING_NUMBER));
+        UiObject showResultBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_show_results"));
+        UiObject emptyListTv = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_empty"));
+
+        //Firsty we will search transactions for fully empty account
+        filterProductsBtn.click();
+        TimeUnit.SECONDS.sleep(1);
+
+        try{
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        productSavingEmptyEUR.click();
+        showResultBtn.click();
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        showResultBtn.click();
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        emptyListTv.isFocusable();
+
+        //Now we will do the same, but for account with transactions
+        topBarFilerIcon.click();
+        TimeUnit.SECONDS.sleep(1);
+
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        filterProductsBtn.click();
+        TimeUnit.SECONDS.sleep(1);
+
+        try{
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        productSavingEmptyEUR.click();
+
+        // Now we should have no filters selected
+        // and we choose account with few transactions
+
+        productPersonalGBP.click();
+        showResultBtn.click();
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        showResultBtn.click();
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        //We have screen with filtered transactions and we we will check if all of transactions are related with chose account
+
+    }
 }
