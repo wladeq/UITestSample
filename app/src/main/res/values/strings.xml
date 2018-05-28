@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">BankTest</string>
+    <string name="app_name">C-3PO</string>
+    <string name="przewitanie">Tą appkę zainstalował Ci Wladek dla testów automatycznych. W razie potrzeby możesz slasować</string>
 </resources>

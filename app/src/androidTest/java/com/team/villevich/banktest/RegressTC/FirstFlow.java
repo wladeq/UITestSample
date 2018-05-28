@@ -51,7 +51,6 @@ public class FirstFlow {
 
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-
     }
 
     //LOGIN ON EXISTING USER WITH ACTIVE VV
@@ -305,6 +304,8 @@ public class FirstFlow {
     //LON-19 Test blokowania aplikacji
     //@Test
     public void test3() throws UiObjectNotFoundException, InterruptedException {
+
+        //Pętła niepoprawnych passcodów do blokowania appki
         for(int i = 0; i <2;i++) {
             try {
                 UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
@@ -347,6 +348,8 @@ public class FirstFlow {
             UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
             assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
         }
+
+        //Tezecia próba z innym pop-upem
         mDevice.pressKeyCode(0x00000091);
         mDevice.pressKeyCode(0x00000091);
         mDevice.pressKeyCode(0x00000092);
@@ -365,8 +368,9 @@ public class FirstFlow {
             assertThat(APP_LOCKED_ALERT, is(equalTo(appLockedTV.getText())));
         }
         UiObject okBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
-        okBtn.click();
 
+        //Sprawdzenie, czy został wyświetłony ekran zablokowanej appki
+        okBtn.click();
         try {
             TimeUnit.SECONDS.sleep(5);
             UiObject appAfterLockTV = mDevice.findObject(new UiSelector().text(LOCKED_APP_TEXT));
@@ -378,5 +382,4 @@ public class FirstFlow {
             appAfterLockTV.isFocusable();
         }
     }
-
 }
