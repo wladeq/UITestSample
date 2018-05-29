@@ -30,7 +30,6 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 public class SecondFlow {
-
     private UiDevice mDevice;
     private String LOGIN_ENTER_PASSCODE = "Enter your passcode",
             DASHBOARD_BAR_TITLE = "GOLDEN SAND BANK",
@@ -212,7 +211,7 @@ public class SecondFlow {
     }
 
     //PAYMENT
-    @Test
+    //@Test
     public void test3() throws UiObjectNotFoundException, InterruptedException {
         String datePayment;
         UiObject topBarDashboard = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
@@ -562,6 +561,27 @@ public class SecondFlow {
             assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
         }
         //We have screen with filtered transactions and we we will check if all of transactions are related with chose account
+        int transactionsIndex=1;
+        String FORMATED_ACC_NUMBER = GBP_PERSONAL_NUMBER.replace(" ","").substring(0,4) + " "
+                + GBP_PERSONAL_NUMBER.replace(" ","").substring(4,8) + " "
+                + GBP_PERSONAL_NUMBER.replace(" ","").substring(8,12) + " "
+                + GBP_PERSONAL_NUMBER.replace(" ","").substring(12,16) + " "
+                + GBP_PERSONAL_NUMBER.replace(" ","").substring(16,20) + " "
+                + GBP_PERSONAL_NUMBER.replace(" ","").substring(20);
+        do {
+            UiObject filteredTransaction = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
+            transactionsIndex++;
+            filteredTransaction.click();
+            UiObject ibanField = mDevice.findObject(new UiSelector().text(FORMATED_ACC_NUMBER));
+            ibanField.exists();
+      /*      try {
 
+
+            } catch (UiObjectNotFoundException e){
+                TimeUnit.SECONDS.sleep(1);
+                UiObject ibanField = mDevice.findObject(new UiSelector().text(FORMATED_ACC_NUMBER));
+            }*/
+            mDevice.pressBack();
+        } while (mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(2)).isClickable());
     }
 }
