@@ -8,6 +8,7 @@ import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
+import android.util.Log;
 
 import com.team.villevich.banktest.TestClass;
 
@@ -550,17 +551,18 @@ public class SecondFlow {
         try{
             assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
         } catch( UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(1);
             assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
         }
         showResultBtn.click();
         try{
             assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
         } catch( UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(1);
             assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
         }
         //We have screen with filtered transactions and we we will check if all of transactions are related with chose account
+
         int transactionsIndex=1;
         String FORMATED_ACC_NUMBER = GBP_PERSONAL_NUMBER.replace(" ","").substring(0,4) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(4,8) + " "
@@ -568,20 +570,22 @@ public class SecondFlow {
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(12,16) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(16,20) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(20);
+        UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
+                .text(FORMATED_ACC_NUMBER));
         do {
+            Log.i("SAMPLELOG","Beginning");
             UiObject filteredTransaction = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
-            transactionsIndex++;
             filteredTransaction.click();
-            UiObject ibanField = mDevice.findObject(new UiSelector().text(FORMATED_ACC_NUMBER));
-            ibanField.exists();
-      /*      try {
+            Log.i("SAMPLELOG","Clicked on transaction");
+            ibanField.isEnabled();
+            Log.i("SAMPLELOG","Checked iban field");
+            Log.i("SAMPLELOG","before back press");
+            mDevice.pressKeyCode(0x00000004);
+            Log.i("SAMPLELOG","after back press");
+
+            ++transactionsIndex;
 
 
-            } catch (UiObjectNotFoundException e){
-                TimeUnit.SECONDS.sleep(1);
-                UiObject ibanField = mDevice.findObject(new UiSelector().text(FORMATED_ACC_NUMBER));
-            }*/
-            mDevice.pressBack();
-        } while (mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(2)).isClickable());
+        } while (mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).isEnabled());
     }
 }
