@@ -40,14 +40,14 @@ public class Onboarding {
         selectAll.clickAndWaitForNewWindow();
         UiScrollable scroll = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
         scroll.scrollForward();
-        TimeUnit.SECONDS.sleep(3);
+        TimeUnit.SECONDS.sleep(2);
         UiObject next1 = mDevice.findObject(new UiSelector().text("NEXT"));
         next1.clickAndWaitForNewWindow();
 
         //SECOND PAGE------------------------------------------------------------------------------------------------------------
         UiObject citizenship = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_NATIONALITY_"));
         citizenship.clickAndWaitForNewWindow();
-        UiObject countryTitle = mDevice.findObject(new UiSelector().text("United Kingdom").index(4));
+        UiObject countryTitle = mDevice.findObject(new UiSelector().text("United Kingdom"));
         countryTitle.click();
         TimeUnit.SECONDS.sleep(2);
         UiObject genderTitle = mDevice.findObject(new UiSelector().text("Mr"));
@@ -133,7 +133,7 @@ public class Onboarding {
         dateOfIssue.setText("24/08/2017");
         UiObject placeBirth = mDevice.findObject(new UiSelector().resourceId("ctl00_CPH_Content_E_PLACE_OF_BIRTH"));
         placeBirth.click();
-        UiObject placeBirthChoice = mDevice.findObject(new UiSelector().text("United Kingdom").index(4));
+        UiObject placeBirthChoice = mDevice.findObject(new UiSelector().text("United Kingdom"));
         placeBirthChoice.click();
         UiScrollable scroll5 = new UiScrollable(new UiSelector().className("android.webkit.WebView"));
         scroll5.scrollForward();

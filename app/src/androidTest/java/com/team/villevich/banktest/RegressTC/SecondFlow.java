@@ -63,7 +63,7 @@ public class SecondFlow {
     }
 
     //Logowanie do appki. Brak obsługiwania pop-upów, klient ma wszystko odklikać wcześniej
-    //@Test
+    @Test
     public void test1() throws UiObjectNotFoundException, InterruptedException {
         mDevice.pressHome();
         try {
@@ -97,7 +97,7 @@ public class SecondFlow {
     }
 
     //TRANSFER
-    //@Test
+    @Test
     public void test2() throws InterruptedException, UiObjectNotFoundException {
         String datePayment;
 
@@ -212,7 +212,7 @@ public class SecondFlow {
     }
 
     //PAYMENT
-    //@Test
+    @Test
     public void test3() throws UiObjectNotFoundException, InterruptedException {
         String datePayment;
         UiObject topBarDashboard = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
@@ -256,15 +256,18 @@ public class SecondFlow {
         adress2.setText("Some second adress");
 
 
+        UiScrollable test = new UiScrollable(new UiSelector().className("android.widget.ScrollView"));
+        test.scrollForward();
+        TimeUnit.SECONDS.sleep(1);
+
+
         UiObject coutry = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_dropdown_item_text"));
         coutry.click();
 
         TimeUnit.SECONDS.sleep(1);
         mDevice.click(360,635);
 
-        UiScrollable test = new UiScrollable(new UiSelector().className("android.widget.ScrollView"));
-        test.scrollForward();
-        TimeUnit.SECONDS.sleep(1);
+
 
         //Here we will test validation of following fields:
         Pattern p = Pattern.compile("(([A-Z].*[0-9]))");
@@ -281,6 +284,8 @@ public class SecondFlow {
         //Firstly we insert wrong payment amount
         amount.setText(fromAccCompareValue+"");
         ibanNumber.setText(ACC_NUMBER_PAYMENT);
+        ibanNumber.click();
+        topBarPaymet.click();
         title.setText(TITLE_PAYMENT);
 
         //And try to make a payment
@@ -329,6 +334,7 @@ public class SecondFlow {
 
         //Insert normal acc number
         ibanNumber.setText(ACC_NUMBER_PAYMENT);
+
         //Than empty title
         title.setText("");
         confirm.click();
@@ -564,28 +570,86 @@ public class SecondFlow {
         //We have screen with filtered transactions and we we will check if all of transactions are related with chose account
 
         int transactionsIndex=1;
-        String FORMATED_ACC_NUMBER = GBP_PERSONAL_NUMBER.replace(" ","").substring(0,4) + " "
+        String FORMATED_ACC_NUMBER_GBP = GBP_PERSONAL_NUMBER.replace(" ","").substring(0,4) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(4,8) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(8,12) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(12,16) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(16,20) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(20);
-        UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
-                .text(FORMATED_ACC_NUMBER));
-        do {
-            Log.i("SAMPLELOG","Beginning");
-            UiObject filteredTransaction = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
-            filteredTransaction.click();
-            Log.i("SAMPLELOG","Clicked on transaction");
-            ibanField.isEnabled();
-            Log.i("SAMPLELOG","Checked iban field");
-            Log.i("SAMPLELOG","before back press");
-            mDevice.pressKeyCode(0x00000004);
-            Log.i("SAMPLELOG","after back press");
+        UiScrollable scrollable = new UiScrollable(new UiSelector().className("android.support.v7.widget.RecyclerView"));
 
-            ++transactionsIndex;
+        do{
+            while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
+                UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
+                onTransactionClick.click();
+                try {
+                    UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
+                            .text(FORMATED_ACC_NUMBER_GBP));
+                    ibanField.isEnabled();
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                } catch (UiObjectNotFoundException e) {
+                    UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                            .text(FORMATED_ACC_NUMBER_GBP));
+                    ibanField.isEnabled();
 
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                }
+            }
+            if (scrollable.scrollForward())
+            transactionsIndex =0;
+            else break;
+        } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+        filterProductsBtn.click();
+        productPersonalGBP.click();
+        productPersonalUSD.click();
+        showResultBtn.click();
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        showResultBtn.click();
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
 
-        } while (mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).isEnabled());
-    }
-}
+    transactionsIndex=1;
+    String FORMATED_ACC_NUMBER_USD = USD_PERSONAL_NUMBER.replace(" ","").substring(0,4) + " "
+            + USD_PERSONAL_NUMBER.replace(" ","").substring(4,8) + " "
+            + USD_PERSONAL_NUMBER.replace(" ","").substring(8,12) + " "
+            + USD_PERSONAL_NUMBER.replace(" ","").substring(12,16) + " "
+            + USD_PERSONAL_NUMBER.replace(" ","").substring(16,20) + " "
+            + USD_PERSONAL_NUMBER.replace(" ","").substring(20);
+        do{
+        while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
+            UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
+            onTransactionClick.click();
+            try {
+                UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
+                        .text(FORMATED_ACC_NUMBER_USD));
+                ibanField.isEnabled();
+                mDevice.pressKeyCode(0x00000004);
+                ++transactionsIndex;
+            } catch (UiObjectNotFoundException e) {
+                UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                        .text(FORMATED_ACC_NUMBER_USD));
+                ibanField.isEnabled();
+
+                mDevice.pressKeyCode(0x00000004);
+                ++transactionsIndex;
+            }
+        }
+        if (scrollable.scrollForward())
+            transactionsIndex =0;
+        else break;
+    } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+
+}}

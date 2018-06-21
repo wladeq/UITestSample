@@ -52,7 +52,7 @@ public class LoginFlow {
             UiObject appButton1 = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
             appButton1.clickAndWaitForNewWindow();
         }
-        TimeUnit.SECONDS.sleep(6);
+        TimeUnit.SECONDS.sleep(8);
 
         // There are different types of first screen we will detect current,
         // and use suitable type of interaction
@@ -91,6 +91,7 @@ public class LoginFlow {
 
         } catch(UiObjectNotFoundException e){
             TimeUnit.SECONDS.sleep(2);
+
             welcomeMessage.isFocusable();
         }
 
