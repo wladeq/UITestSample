@@ -3,17 +3,19 @@ package com.team.villevich.banktest;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
-import android.support.test.uiautomator.UiObject;
-import android.support.test.uiautomator.UiObjectNotFoundException;
-import android.support.test.uiautomator.UiScrollable;
-import android.support.test.uiautomator.UiSelector;
 import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.concurrent.TimeUnit;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 @RunWith(AndroidJUnit4.class)
 public class TestClass{
@@ -27,15 +29,39 @@ public class TestClass{
     }
 
     @Test
-    public void test() throws UiObjectNotFoundException, InterruptedException {
+    public void test() throws ParseException {
+   /*
+        Calendar cal = Calendar.getInstance();
+        cal.roll(Calendar.MONTH, -1);
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy");
+        String formated = format.format(cal.getTime());
+        Log.i("current date 1",formated);
+        cal.roll(Calendar.YEAR, -1);
+        Log.i("current date 2", format.format(cal.getTime()).toUpperCase());
+*/
+        Calendar cal1 = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+        String formated = format.format(cal1.getTime());
 
-        UiScrollable test = new UiScrollable(new UiSelector().className("android.support.v7.widget.RecyclerView"));
-        while(test.scrollForward()) {
-            UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(15));
+        Calendar cal = Calendar.getInstance();
+        String dateSample = "22 JUN 2018";
+        cal.setTime(format.parse(dateSample));
+
+        Log.i("date1", cal.getTime().toString());
+        Log.i("date2", cal1.getTime().toString());
+
+        Date date1 = format.parse(dateSample);
+        Date date2 = format.parse(formated);
+
+
+
+        if (date1.equals(date2)){
+            Log.i("QQQ", "EQUALS");
+        } else if (date1.before(date2)) {
+            Log.i("QQQ", "BEFORE");
+        } else if (date1.after(date2)){
+            Log.i("QQQ", "AFTER");
         }
-        /*test.scrollIntoView(onTransactionClick);
-        onTransactionClick.click();*/
-
     }
 
 }

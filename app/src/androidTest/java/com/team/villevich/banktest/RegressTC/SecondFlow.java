@@ -2,21 +2,26 @@ package com.team.villevich.banktest.RegressTC;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.BySelector;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 import android.util.Log;
 
-import com.team.villevich.banktest.TestClass;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -59,7 +64,6 @@ public class SecondFlow {
     public void startMainActivityFromHomeScreen() {
         // Initialize UiDevice instance
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-
     }
 
     //Logowanie do appki. Brak obsługiwania pop-upów, klient ma wszystko odklikać wcześniej
@@ -95,6 +99,11 @@ public class SecondFlow {
 
         TimeUnit.SECONDS.sleep(1);
     }
+
+    //TODO
+    // Get account numbers to make test much more flexible
+    // The best way to get account numbers are Dashboard -> Product -> Slide to left
+    // For personal and saving product must be separate actions
 
     //TRANSFER
     @Test
@@ -164,6 +173,7 @@ public class SecondFlow {
             assertThat(TRANSFER_BAR_TITLE, is(equalTo(topBarDashboard.getText())));
         } catch( UiObjectNotFoundException e){
             throw new IllegalArgumentException("SYSTEM ALLOWS TRANSACTION WITH 0 AMOUNT");
+
         }
 
         UiObject amount = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_enter_amount"));
@@ -444,6 +454,8 @@ public class SecondFlow {
     }
 
     //Filter test
+    //Part one: filter transactions by each product
+
     @Test
     public void test4() throws InterruptedException, UiObjectNotFoundException {
 
@@ -601,6 +613,9 @@ public class SecondFlow {
             transactionsIndex =0;
             else break;
         } while(scrollable.isScrollable());
+
+        //After check of every transaction we will choose another account and do the same thing again
+
         topBarFilerIcon.click();
         filterProductsBtn.click();
         productPersonalGBP.click();
@@ -649,7 +664,243 @@ public class SecondFlow {
         if (scrollable.scrollForward())
             transactionsIndex =0;
         else break;
-    } while(scrollable.isScrollable());
+        } while(scrollable.isScrollable());
+            topBarFilerIcon.click();
+            filterProductsBtn.click();
+            productPersonalUSD.click();
+            showResultBtn.click();
+            //At the end we are on the screen with all filter options
+    }
+
+    public ArrayList<UiObject2> retrieveTopLevelUiObjects(BySelector uiSelector) throws UiObjectNotFoundException {
+        int i = 0;
+        ArrayList<UiObject2> uiObjects = (ArrayList<UiObject2>) mDevice.findObjects(uiSelector);
+        return uiObjects;
+    }
+    //Next we will test date filter
+    @Test
+    public void test5() throws Exception {
+
+        //Get dates for each of the filters (1M, 3M, 6M, 12M)
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
+
+        // Firstly for 1M
+        cal.roll(Calendar.MONTH, -1);
+        String date1M = format.format(cal.getTime()).toUpperCase();
+        Date date1MD = format.parse(date1M);
+
+        // For 3M
+        cal.roll(Calendar.MONTH,-2);
+        String date3M = format.format(cal.getTime()).toUpperCase();
+        Date date3MD = format.parse(date3M);
+
+        // For 6M
+        cal.roll(Calendar.MONTH,-3);
+        String date6M = format.format(cal.getTime()).toUpperCase();
+        Date date6MD = format.parse(date6M);
+
+        // For 12M
+        cal.roll(Calendar.MONTH,6);
+        cal.roll(Calendar.YEAR,-1);
+        String date12M = format.format(cal.getTime()).toUpperCase();
+        Date date12MD = format.parse(date12M);
+
+        UiObject topBarFilerIcon = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/menu_filter"));
+        UiObject filterProductsBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/iv_filter_product_arrow"));
+        UiObject filterDate1M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_1m"));
+        UiObject filterDate3M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_3m"));
+        UiObject filterDate6M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_6m"));
+        UiObject filterDate12M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_12m"));
+        UiObject filterDateOther = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_other"));
+        UiObject filterDateOtherFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_from_content"));
+        UiObject calendarNextIcon = mDevice.findObject(new UiSelector().resourceId("android:id/next"));
+        UiObject filterDateOtherTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_to_content"));
+
+        UiObject calendarOK = mDevice.findObject(new UiSelector().resourceId("android:id/button1"));
+        UiObject filterFundsIncoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_incoming"));
+        UiObject filterFundsOutcoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_outcoming"));
+        UiObject filterAmountFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/et_amount_from_content"));
+        UiObject filterAmountTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/et_amount_to_content"));
+        UiObject filterTransType = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cirv_type"));
+        UiObject filterClearFilters = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/ll_clear"));
+        UiObject productPersonalGBP = mDevice.findObject(new UiSelector().text(GBP_PERSONAL_NUMBER));
+        UiObject productPersonalUSD = mDevice.findObject(new UiSelector().text(USD_PERSONAL_NUMBER));
+        UiObject productSavingEmptyEUR = mDevice.findObject(new UiSelector().text(EUR_SAVING_NUMBER));
+        UiObject showResultBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_show_results"));
+        UiScrollable scrollable = new UiScrollable(new UiSelector().className("android.support.v7.widget.RecyclerView"));
+        UiObject emptyListTv = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_empty"));
+
+/*
+
+        //Firstly filter transactions for one month
+        filterDate1M.click();
+        showResultBtn.click();
+
+        Calendar calendar = Calendar.getInstance();
+        String currentDateString = format.format(calendar.getTime());
+        Date currentDate = format.parse(currentDateString);
+
+        do {
+            List<UiObject2> dateField = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_date"));
+            for (int i = 0; i < dateField.size(); i++) {
+                Date transactionDate = format.parse(dateField.get(i).getText());
+                if (transactionDate.before(currentDate) && transactionDate.after(date1MD)) {
+                    Log.i("Date", "is Ok");
+                } else if (transactionDate.equals(currentDate) || transactionDate.equals(date1MD)) {
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+           if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+           }
+            else break;
+        } while(scrollable.isScrollable());
+
+        //Look's like for 1 month filter works well, now we will check it for 3M
+        topBarFilerIcon.click();
+        filterDate3M.click();
+        showResultBtn.click();
+
+        do {
+            List<UiObject2> dateField = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_date"));
+            for (int i = 0; i < dateField.size(); i++) {
+                Date transactionDate = format.parse(dateField.get(i).getText());
+                if (transactionDate.before(currentDate) && transactionDate.after(date3MD)) {
+                    Log.i("Date", "is Ok");
+                } else if (transactionDate.equals(currentDate) || transactionDate.equals(date3MD)) {
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+
+        //For 6M
+        topBarFilerIcon.click();
+        filterDate6M.click();
+        showResultBtn.click();
+
+        do {
+            List<UiObject2> dateField = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_date"));
+            for (int i = 0; i < dateField.size(); i++) {
+                Date transactionDate = format.parse(dateField.get(i).getText());
+                if (transactionDate.before(currentDate) && transactionDate.after(date3MD)) {
+                    Log.i("Date", "is Ok");
+                } else if (transactionDate.equals(currentDate) || transactionDate.equals(date3MD)) {
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+
+        //For 1 year
+        topBarFilerIcon.click();
+        filterDate12M.click();
+        showResultBtn.click();
+
+        do {
+            List<UiObject2> dateField = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_date"));
+            for (int i = 0; i < dateField.size(); i++) {
+                Date transactionDate = format.parse(dateField.get(i).getText());
+                if (transactionDate.before(currentDate) && transactionDate.after(date12MD)) {
+                    Log.i("Date", "is Ok");
+                } else if (transactionDate.equals(currentDate) || transactionDate.equals(date12MD)) {
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+
+        topBarFilerIcon.click();
+*/
+
+        //Filter with correct from date
+        filterDateOther.click();
+        filterDateOtherFrom.click();
+        UiObject dateHeader = mDevice.findObject(new UiSelector().resourceId("android:id/date_picker_header_date"));
+        UiObject dateHeaderYear = mDevice.findObject(new UiSelector().resourceId("android:id/date_picker_header_year"));
+        int dateToChoose = Integer.parseInt(dateHeader.getText().substring(5,7))-5;
+        String headerDate = dateHeader.getText().substring(5) + " " + dateHeaderYear.getText();
+        UiObject calendarDayNumberFrom = mDevice.findObject(new UiSelector().text(Integer.toString(dateToChoose)));
+        calendarDayNumberFrom.click();
+        calendarOK.click();
+        showResultBtn.click();
+        Date headerDateToCompareFrom = format.parse(headerDate);
+
+        do {
+            List<UiObject2> dateField = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_date"));
+            for (int i = 0; i < dateField.size(); i++) {
+                Date transactionDate = format.parse(dateField.get(i).getText());
+                if (transactionDate.before(headerDateToCompareFrom) || transactionDate.equals(headerDateToCompareFrom)) {
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
         topBarFilerIcon.click();
 
-}}
+        //From date and To date check
+        filterDateOtherTo.click();
+        int dateToChoose2 = Integer.parseInt(dateHeader.getText().substring(5,7))-1;
+        UiObject calendarDayNumberTo = mDevice.findObject(new UiSelector().text(Integer.toString(dateToChoose2)));
+        calendarDayNumberTo.click();
+        calendarOK.click();
+        showResultBtn.click();
+        Date headerDateToCompareTo = format.parse(headerDate);
+
+        do {
+            List<UiObject2> dateField = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_date"));
+            for (int i = 0; i < dateField.size(); i++) {
+                Date transactionDate = format.parse(dateField.get(i).getText());
+                if (transactionDate.before(headerDateToCompareTo) || transactionDate.equals(headerDateToCompareTo)&&
+                        transactionDate.after(headerDateToCompareFrom)||transactionDate.equals(headerDateToCompareFrom)) {
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+
+
+        //Filter with future date, must be empty list
+        filterDateOther.click();
+        filterDateOther.click();
+        filterDateOtherFrom.click();
+        calendarNextIcon.click();
+        calendarNextIcon.click();
+        calendarDayNumberFrom.click();
+        calendarOK.click();
+        showResultBtn.click();
+        emptyListTv.exists();
+        topBarFilerIcon.click();
+
+
+    }
+}
