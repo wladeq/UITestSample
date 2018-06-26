@@ -677,6 +677,7 @@ public class SecondFlow {
         ArrayList<UiObject2> uiObjects = (ArrayList<UiObject2>) mDevice.findObjects(uiSelector);
         return uiObjects;
     }
+
     //Next we will test date filter
     @Test
     public void test5() throws Exception {
@@ -716,7 +717,7 @@ public class SecondFlow {
         UiObject filterDateOtherFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_from_content"));
         UiObject calendarNextIcon = mDevice.findObject(new UiSelector().resourceId("android:id/next"));
         UiObject filterDateOtherTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_to_content"));
-
+        UiObject toolbarTitle = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
         UiObject calendarOK = mDevice.findObject(new UiSelector().resourceId("android:id/button1"));
         UiObject filterFundsIncoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_incoming"));
         UiObject filterFundsOutcoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_outcoming"));
@@ -731,7 +732,7 @@ public class SecondFlow {
         UiScrollable scrollable = new UiScrollable(new UiSelector().className("android.support.v7.widget.RecyclerView"));
         UiObject emptyListTv = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_empty"));
 
-/*
+
 
         //Firstly filter transactions for one month
         filterDate1M.click();
@@ -829,7 +830,7 @@ public class SecondFlow {
         } while(scrollable.isScrollable());
 
         topBarFilerIcon.click();
-*/
+
 
         //Filter with correct from date
         filterDateOther.click();
@@ -900,7 +901,242 @@ public class SecondFlow {
         showResultBtn.click();
         emptyListTv.exists();
         topBarFilerIcon.click();
+        filterDateOther.click();
 
 
+        // Only incoming transactions filter
+
+        filterFundsIncoming.click();
+        showResultBtn.click();
+        TimeUnit.SECONDS.sleep(2);
+        do {
+            List<UiObject2> transactionValue = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_value"));
+            for (int i = 0; i < transactionValue.size(); i++) {
+                char transactionSign = (transactionValue.get(i).getText()).charAt(4);
+                if (transactionSign == '+'){
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+
+        filterFundsOutcoming.click();
+        showResultBtn.click();
+        TimeUnit.SECONDS.sleep(2);
+        do {
+            List<UiObject2> transactionValue = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_value"));
+            for (int i = 0; i < transactionValue.size(); i++) {
+                char transactionSign = (transactionValue.get(i).getText()).charAt(4);
+                if (transactionSign == '-'){
+                    Log.i("Date", "is Ok");
+                } else {
+                    throw new Exception("Wrong date of the transaction");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+    topBarFilerIcon.click();
+    filterFundsOutcoming.click();
+
+
+        // From - To amount check
+        // Firstly check filter for 'to 0' - empty list
+
+        filterAmountTo.setText("0");
+        showResultBtn.click();
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        emptyListTv.isFocusable();
+        topBarFilerIcon.click();
+        filterAmountTo.setText("");
+
+        // Filter from 150
+        filterAmountFrom.setText("150");
+        showResultBtn.click();
+        TimeUnit.SECONDS.sleep(2);
+
+        do {
+            List<UiObject2> transactionValue = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_value"));
+            for (int i = 0; i < transactionValue.size(); i++) {
+                int transactionIntValue = Integer.parseInt(transactionValue.get(i).getText().substring(5,transactionValue.get(i)
+                        .getText().length()-3).replaceAll(",",""));
+                if (transactionIntValue>=150){
+                    Log.i("Transaction value", "is Ok");
+                } else {
+                    throw new Exception("Wrong transaction value");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+        filterAmountFrom.setText("");
+
+        //Filter to 150
+        filterAmountTo.setText("150");
+        showResultBtn.click();
+        TimeUnit.SECONDS.sleep(2);
+
+        do {
+            List<UiObject2> transactionValue = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_value"));
+            for (int i = 0; i < transactionValue.size(); i++) {
+                int transactionIntValue = Integer.parseInt(transactionValue.get(i).getText().substring(5,transactionValue.get(i)
+                        .getText().length()-3).replaceAll(",",""));
+                if (transactionIntValue<=150){
+                    Log.i("Transaction value", "is Ok");
+                } else {
+                    throw new Exception("Wrong transaction value");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+        filterAmountFrom.setText("");
+
+        //Filter from 150 to 1000
+        filterAmountFrom.setText("150");
+        filterAmountTo.setText("1000");
+        showResultBtn.click();
+        TimeUnit.SECONDS.sleep(2);
+
+        do {
+            List<UiObject2> transactionValue = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_value"));
+            for (int i = 0; i < transactionValue.size(); i++) {
+                int transactionIntValue = Integer.parseInt(transactionValue.get(i).getText().substring(5,transactionValue.get(i)
+                        .getText().length()-3).replaceAll(",",""));
+                if (transactionIntValue>=150&&transactionIntValue<=1000){
+                    Log.i("Transaction value", "is Ok");
+                } else {
+                    throw new Exception("Wrong transaction value");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+        filterAmountFrom.setText("");
+        filterAmountTo.setText("");
+    }
+
+    //Transaction type filter check
+    @Test
+    public void test6() throws Exception {
+
+        UiObject topBarFilerIcon = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/menu_filter"));
+        UiObject filterProductsBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/iv_filter_product_arrow"));
+        UiObject filterDate1M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_1m"));
+        UiObject filterDate3M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_3m"));
+        UiObject filterDate6M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_6m"));
+        UiObject filterDate12M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_12m"));
+        UiObject filterDateOther = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_other"));
+        UiObject filterDateOtherFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_from_content"));
+        UiObject calendarNextIcon = mDevice.findObject(new UiSelector().resourceId("android:id/next"));
+        UiObject filterDateOtherTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_to_content"));
+        UiObject toolbarTitle = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
+        UiObject calendarOK = mDevice.findObject(new UiSelector().resourceId("android:id/button1"));
+        UiObject filterFundsIncoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_incoming"));
+        UiObject filterFundsOutcoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_outcoming"));
+        UiObject filterAmountFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/et_amount_from_content"));
+        UiObject filterAmountTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/et_amount_to_content"));
+        UiObject filterTransType = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cirv_type"));
+        UiObject filterClearFilters = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/ll_clear"));
+        UiObject productPersonalGBP = mDevice.findObject(new UiSelector().text(GBP_PERSONAL_NUMBER));
+        UiObject productPersonalUSD = mDevice.findObject(new UiSelector().text(USD_PERSONAL_NUMBER));
+        UiObject productSavingEmptyEUR = mDevice.findObject(new UiSelector().text(EUR_SAVING_NUMBER));
+        UiObject transactionTypeContent = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_transaction_type_content"));
+        UiObject showResultBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_show_results"));
+        UiScrollable scrollable = new UiScrollable(new UiSelector().className("android.support.v7.widget.RecyclerView"));
+        UiScrollable scrollTransactionDetails = new UiScrollable(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/sv_transaction_details_data"));
+        UiObject emptyListTv = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_empty"));
+        UiObject typeTransfers = mDevice.findObject(new UiSelector().text("Transfers"));
+        UiObject typePayments = mDevice.findObject(new UiSelector().text("Payments"));
+        UiObject typeFees = mDevice.findObject(new UiSelector().text("Fees"));
+        UiObject typeExecuted = mDevice.findObject(new UiSelector().text("Executed"));
+        UiObject typePlanned = mDevice.findObject(new UiSelector().text("Planned"));
+        UiObject typeBlockades = mDevice.findObject(new UiSelector().text("Blockades"));
+        UiObject btnFilter = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_filter"));
+        int transactionsIndex = 1;
+        filterTransType.click();
+
+        //Firstly we will check if all necessary options exists
+        typeBlockades.exists();
+        typeExecuted.exists();
+        typeFees.exists();
+        typePayments.exists();
+        typeTransfers.exists();
+        typePlanned.exists();
+/*
+
+        // Filter check for transactions with transfer type
+        typeTransfers.click();
+        btnFilter.click();
+        showResultBtn.click();
+        do {
+            List<UiObject2> titles = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_name"));
+            for (int i = 0; i < titles.size(); i++) {
+                if (titles.get(i).getText().equals("Own transfer")){
+                    Log.i("Transaction title", "is Ok");
+                } else {
+                    throw new Exception("Wrong transaction title");
+                }
+            }
+            if( scrollable.scrollForward()){
+                Log.i("Page ","scrolled forward");
+            }
+            else break;
+        } while(scrollable.isScrollable());
+        topBarFilerIcon.click();
+        filterTransType.click();
+        typeTransfers.click();
+*/
+
+        // Check transaction type for payment
+        typePayments.click();
+        btnFilter.click();
+        showResultBtn.click();
+
+        do {
+            while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
+                UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
+                onTransactionClick.click();
+                TimeUnit.SECONDS.sleep(2);
+                scrollTransactionDetails.scrollForward();
+                try {
+                    transactionTypeContent.exists();
+                    assertThat(transactionTypeContent.getText(), is(equalTo(PAYMENT_BAR_TITLE)));
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                    } catch (UiObjectNotFoundException e) {
+                    TimeUnit.SECONDS.sleep(1);
+                    transactionTypeContent.exists();
+                    assertThat(transactionTypeContent.getText(), is(equalTo(PAYMENT_BAR_TITLE)));
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                    }
+            }
+            if (scrollable.isScrollable())
+                transactionsIndex =0;
+            else break;
+            } while(scrollable.isScrollable());
     }
 }
