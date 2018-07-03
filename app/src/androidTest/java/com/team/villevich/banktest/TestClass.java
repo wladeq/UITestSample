@@ -9,6 +9,7 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
+import android.util.Log;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,17 +28,7 @@ public class TestClass{
 
     @Test
     public void test() throws UiObjectNotFoundException {
-        device.pressHome();
-        try {
-            UiObject appButton1 = device.findObject(new UiSelector().text("Golden Sand Bank"));
-            appButton1.click();
-        } catch (UiObjectNotFoundException e){
-            device.pressHome();
-            UiObject appButton1 = device.findObject(new UiSelector().text("Golden Sand Bank"));
-            appButton1.click();
-        }
-        UiObject2 element = device.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/tv_passcode_hint")),5000);
-
+        UiObject2 ibanField = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/tv_account_number_from")
+                .text("fd")),1000);
     }
-
 }

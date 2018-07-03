@@ -4,6 +4,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.BySelector;
+import android.support.test.uiautomator.StaleObjectException;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObject2;
@@ -285,14 +286,6 @@ public class SecondFlow {
         UiScrollable test = new UiScrollable(new UiSelector().className("android.widget.ScrollView"));
         test.scrollForward();
         TimeUnit.SECONDS.sleep(1);
-
-
-        UiObject coutry = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_dropdown_item_text"));
-        coutry.click();
-
-        TimeUnit.SECONDS.sleep(1);
-        mDevice.click(360,635);
-
 
 
         //Here we will test validation of following fields:
@@ -613,20 +606,45 @@ public class SecondFlow {
             while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
                 UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
                 onTransactionClick.click();
-                try {
-                    UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
-                            .text(FORMATED_ACC_NUMBER_GBP));
-                    ibanField.isEnabled();
-                    mDevice.pressKeyCode(0x00000004);
-                    ++transactionsIndex;
-                } catch (UiObjectNotFoundException e) {
-                    UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
-                            .text(FORMATED_ACC_NUMBER_GBP));
-                    ibanField.isEnabled();
 
-                    mDevice.pressKeyCode(0x00000004);
-                    ++transactionsIndex;
-                }
+                final String localIban = FORMATED_ACC_NUMBER_GBP;
+                Thread threadCheck = new Thread(){
+                    public void run(){
+                        UiObject2 ibanField = mDevice.wait(Until.findObject(By.text(localIban)),2000);
+                        Thread.yield();
+                    }
+                };
+
+                Thread threadBack = new Thread(){
+                    public void run(){
+                        mDevice.pressBack();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Thread.yield();
+                    }
+                };
+                threadCheck.setPriority(10);
+                threadCheck.start();
+                Thread.sleep(2000);
+                threadCheck.join();
+                threadBack.start();
+                Thread.sleep(1000);
+                threadBack.join();
+                ++transactionsIndex;
+
+            /*    byte localRuler=1;
+                UiObject2 ibanField = mDevice.wait(Until.findObject(By.text(FORMATED_ACC_NUMBER_GBP)),2000);
+                Thread.yield();
+                Thread.sleep(5000);
+                ibanField.isEnabled();
+               // if (ibanField.isEnabled()&&localRuler==1){
+                mDevice.pressBack();
+                ++transactionsIndex;
+                    localRuler=0;*/
+
             }
             if (scrollable.scrollForward())
             transactionsIndex =0;
@@ -774,7 +792,7 @@ public class SecondFlow {
                 }
             }
            if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
+                TimeUnit.SECONDS.sleep(1);
            }
             else break;
         } while(scrollable.isScrollable());
@@ -797,7 +815,7 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
+                TimeUnit.SECONDS.sleep(1);
             }
             else break;
         } while(scrollable.isScrollable());
@@ -820,8 +838,7 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
-            }
+                TimeUnit.SECONDS.sleep(1);            }
             else break;
         } while(scrollable.isScrollable());
 
@@ -843,8 +860,7 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
-            }
+                TimeUnit.SECONDS.sleep(1);            }
             else break;
         } while(scrollable.isScrollable());
 
@@ -856,10 +872,19 @@ public class SecondFlow {
         filterDateOtherFrom.click();
         UiObject dateHeader = mDevice.findObject(new UiSelector().resourceId("android:id/date_picker_header_date"));
         UiObject dateHeaderYear = mDevice.findObject(new UiSelector().resourceId("android:id/date_picker_header_year"));
-        int dateToChoose = Integer.parseInt(dateHeader.getText().substring(5,7))-5;
+        int dateToChoose = Integer.parseInt(dateHeader.getText().substring(5,7).replaceAll(" ",""));
         String headerDate = dateHeader.getText().substring(5) + " " + dateHeaderYear.getText();
-        UiObject calendarDayNumberFrom = mDevice.findObject(new UiSelector().text(Integer.toString(dateToChoose)));
-        calendarDayNumberFrom.click();
+        UiObject calendarDayNumberFrom;
+        if(dateToChoose > 6) {
+            calendarDayNumberFrom = mDevice.findObject(new UiSelector().text(Integer.toString(dateToChoose - 5)));
+            calendarDayNumberFrom.click();
+
+        } else {
+            UiObject2 prevMonth = mDevice.wait(Until.findObject(By.res("android:id/prev")),3000);
+            prevMonth.click();
+            calendarDayNumberFrom = mDevice.findObject(new UiSelector().text(Integer.toString(dateToChoose + 15)));
+            calendarDayNumberFrom.click();
+        }
         calendarOK.click();
         showResultBtn.click();
         Date headerDateToCompareFrom = format.parse(headerDate);
@@ -875,15 +900,14 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
-            }
+                TimeUnit.SECONDS.sleep(1);            }
             else break;
         } while(scrollable.isScrollable());
         topBarFilerIcon.click();
 
         //From date and To date check
         filterDateOtherTo.click();
-        int dateToChoose2 = Integer.parseInt(dateHeader.getText().substring(5,7))-1;
+        int dateToChoose2 = Integer.parseInt(dateHeader.getText().substring(5,7).replaceAll(" ", ""))-1;
         UiObject calendarDayNumberTo = mDevice.findObject(new UiSelector().text(Integer.toString(dateToChoose2)));
         calendarDayNumberTo.click();
         calendarOK.click();
@@ -902,7 +926,7 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
+                TimeUnit.SECONDS.sleep(1);
             }
             else break;
         } while(scrollable.isScrollable());
@@ -939,7 +963,7 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
+                TimeUnit.SECONDS.sleep(1);
             }
             else break;
         } while(scrollable.isScrollable());
@@ -959,7 +983,7 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
+                TimeUnit.SECONDS.sleep(1);
             }
             else break;
         } while(scrollable.isScrollable());
@@ -999,7 +1023,7 @@ public class SecondFlow {
                 }
             }
             if( scrollable.scrollForward()){
-                Log.i("Page ","scrolled forward");
+                TimeUnit.SECONDS.sleep(1);
             }
             else break;
         } while(scrollable.isScrollable());
@@ -1082,7 +1106,7 @@ public class SecondFlow {
         typeTransfers.exists();
         typePlanned.exists();
 
-/*
+
 
         // Filter check for transactions with transfer type
         typeTransfers.click();
@@ -1137,7 +1161,7 @@ public class SecondFlow {
         topBarFilerIcon.click();
         filterTransType.click();
         typePayments.click();
-*/
+
 
 
         // Check transaction type for fees
