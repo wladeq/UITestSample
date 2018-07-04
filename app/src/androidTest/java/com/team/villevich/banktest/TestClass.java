@@ -31,4 +31,9 @@ public class TestClass{
         UiObject2 ibanField = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/tv_account_number_from")
                 .text("fd")),1000);
     }
+
+    //            test1();
+    //            mDevice.pressRecentApps();
+    //            UiObject appButton3 = mDevice.findObject(new UiSelector().resourceId("com.android.systemui:id/recents_close_all_button"));
+    //            appButton3.click();
 }
