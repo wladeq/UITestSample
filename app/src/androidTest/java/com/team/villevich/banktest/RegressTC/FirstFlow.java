@@ -8,6 +8,7 @@ import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertThat;
 //
 
 @RunWith(AndroidJUnit4.class)
+
 public class FirstFlow {
     private UiDevice mDevice;
     //TEXT TO COMPARE WITH UI ELEMENTS
@@ -106,33 +108,25 @@ public class FirstFlow {
         next2.click();
 
         TimeUnit.SECONDS.sleep(1);
-        //Press 1
-        mDevice.click(220,830);
-        mDevice.click(220,830);
-        //Press 2
-        mDevice.click(360,830);
-        mDevice.click(360,830);
-        //Press 3
-        mDevice.click(505,835);
-        mDevice.click(505,835);
-        //Press 4
-        mDevice.click(214,937);
-        mDevice.click(214,937);
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000092);
+        mDevice.pressKeyCode(0x00000092);
+        mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000094);
+        mDevice.pressKeyCode(0x00000094);
 
         TimeUnit.SECONDS.sleep(1);
 
-        //Press 1
-        mDevice.click(220,830);
-        mDevice.click(220,830);
-        //Press 2
-        mDevice.click(360,830);
-        mDevice.click(360,830);
-        //Press 3
-        mDevice.click(505,835);
-        mDevice.click(505,835);
-        //Press 4
-        mDevice.click(214,937);
-        mDevice.click(214,937);
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000092);
+        mDevice.pressKeyCode(0x00000092);
+        mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000094);
+        mDevice.pressKeyCode(0x00000094);
 
         mDevice.pressBack();
 
@@ -143,7 +137,7 @@ public class FirstFlow {
     }
 
     //LON-83
-    //@Test
+    @Test
     public void test1() throws UiObjectNotFoundException, InterruptedException {
 
         mDevice.pressHome();

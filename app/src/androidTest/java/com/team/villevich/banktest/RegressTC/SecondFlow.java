@@ -1,12 +1,10 @@
 package com.team.villevich.banktest.RegressTC;
 
 import android.os.RemoteException;
-import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.BySelector;
-import android.support.test.uiautomator.StaleObjectException;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObject2;
@@ -62,7 +60,7 @@ public class SecondFlow {
          // USE ACC NUMBER FOR PAYMENT ONLY WITHOUT SPACES OR CHANGE TEST CODE //
             ACC_NUMBER_PAYMENT = "GI35NWBK000001263422930",
 
-            TITLE_PAYMENT = "Napiwki",
+            TITLE_PAYMENT = "Rent payment",
             NAME_PAYMENT = "Pawlik Morozov";
     private String balanceFieldValue, fromAccNrFieldValue;
     private boolean isExchangeExists=false;
@@ -459,30 +457,41 @@ public class SecondFlow {
     //Filter test
     //Part one: filter transactions by each product
 
-    @Test
+    //@Test
     public void test5() throws InterruptedException, UiObjectNotFoundException {
 
-        UiObject2 toolbarTitle = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(DASHBOARD_BAR_TITLE)),6000);
-        toolbarTitle.isEnabled();
+        UiObject toolbarTitle = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
+        try{
+            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
 
         //Transactions screen
-        UiObject2 transactionBottomMenu = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/tab_transactions"))
-                ,6000);
+        UiObject transactionBottomMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_transactions"));
         transactionBottomMenu.click();
 
-        UiObject2 toolbarTitle1 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(TRANSACTIONS_BAR_TITLE)),6000);
-        toolbarTitle1.isEnabled();
+        TimeUnit.SECONDS.sleep(3);
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+            toolbarTitle.isFocusable();
+        } catch (UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            toolbarTitle.isFocusable();
+        }
 
         //Filters screen
-        UiObject2 topBarFilerIcon = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/menu_filter")),6000);
+        UiObject topBarFilerIcon = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/menu_filter"));
         topBarFilerIcon.click();
+        TimeUnit.SECONDS.sleep(1);
 
-
-        UiObject2 topBarFilerIcon2 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-        .text(FILTERS_BAR_TITLE)),6000);
-        topBarFilerIcon2.isEnabled();
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
 
         //Find all necessary objects on the filters screen
         UiObject filterProductsBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/iv_filter_product_arrow"));
@@ -503,34 +512,54 @@ public class SecondFlow {
         UiObject productPersonalUSD = mDevice.findObject(new UiSelector().text(USD_PERSONAL_NUMBER));
         UiObject productSavingEmptyEUR = mDevice.findObject(new UiSelector().text(EUR_SAVING_NUMBER));
         UiObject showResultBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_show_results"));
+        UiObject emptyListTv = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_empty"));
 
         //Firsty we will search transactions for fully empty account
         filterProductsBtn.click();
+        TimeUnit.SECONDS.sleep(1);
 
-        UiObject2 topBarFilerIcon3 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(PRODUCT_BAR_TITLE)),6000);
+        try{
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
         productSavingEmptyEUR.click();
         showResultBtn.click();
-
-        UiObject2 topBarFilerIcon4 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(FILTERS_BAR_TITLE)),6000);
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
         showResultBtn.click();
-
-        UiObject2 emptyListTv = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/tv_empty")),6000);
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+        emptyListTv.isFocusable();
 
         //Now we will do the same, but for account with transactions
         topBarFilerIcon.click();
         TimeUnit.SECONDS.sleep(1);
 
-
-        UiObject2 topBarFilerIcon5 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(FILTERS_BAR_TITLE)),6000);
-        topBarFilerIcon5.isEnabled();
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
         filterProductsBtn.click();
+        TimeUnit.SECONDS.sleep(1);
 
-        UiObject2 topBarFilerIcon6 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(PRODUCT_BAR_TITLE)),6000);
-        topBarFilerIcon6.isEnabled();
+        try{
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(PRODUCT_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
         productSavingEmptyEUR.click();
 
         // Now we should have no filters selected
@@ -538,15 +567,19 @@ public class SecondFlow {
 
         productPersonalGBP.click();
         showResultBtn.click();
-
-        UiObject2 topBarFilerIcon7 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(FILTERS_BAR_TITLE)),6000);
-        topBarFilerIcon7.isEnabled();
+        try{
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(1);
+            assertThat(FILTERS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
         showResultBtn.click();
-
-        UiObject2 topBarFilerIcon8 = mDevice.wait(Until.findObject(By.res("com.ailleron.longbank.gtest:id/toolbar_title")
-                .text(TRANSACTIONS_BAR_TITLE)),6000);
-        topBarFilerIcon8.isEnabled();
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(1);
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
         //We have screen with filtered transactions and we we will check if all of transactions are related with chose account
 
         int transactionsIndex=1;
@@ -557,48 +590,49 @@ public class SecondFlow {
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(16,20) + " "
                 + GBP_PERSONAL_NUMBER.replace(" ","").substring(20);
         UiScrollable scrollable = new UiScrollable(new UiSelector().className("android.support.v7.widget.RecyclerView"));
-
+        int counter = 2;
         do{
             while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
                 UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
                 onTransactionClick.click();
-
-                final String localIban = FORMATED_ACC_NUMBER_GBP;
-                Thread threadCheck = new Thread(){
-                    public void run(){
-                        UiObject2 ibanField = mDevice.wait(Until.findObject(By.text(localIban)),2000);
-                        Thread.yield();
-                    }
-                };
-
-                Thread threadBack = new Thread(){
-                    public void run(){
-                        mDevice.pressBack();
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                    UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
+                            .text(FORMATED_ACC_NUMBER_GBP));
+                    ibanField.isEnabled();
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                } catch (UiObjectNotFoundException e) {
+                    TimeUnit.SECONDS.sleep(1);
+                    try {
+                        UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                                .text(FORMATED_ACC_NUMBER_GBP));
+                        ibanField.isEnabled();
+                    } catch (UiObjectNotFoundException a){
+                        try{
+                            TimeUnit.SECONDS.sleep(3);
+                            UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                                    .text(FORMATED_ACC_NUMBER_GBP));
+                            ibanField.isEnabled();
+                        }catch(UiObjectNotFoundException r){
+                        onTransactionClick.click();
+                        TimeUnit.SECONDS.sleep(2);
+                        UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                                .text(FORMATED_ACC_NUMBER_GBP));
+                        ibanField.isEnabled();
                         }
-                        Thread.yield();
                     }
-                };
-                threadCheck.setPriority(10);
-                threadCheck.start();
-                Thread.sleep(2000);
-                threadCheck.join();
-                threadBack.start();
-                Thread.sleep(1000);
-                threadBack.join();
-                ++transactionsIndex;
-
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                    --counter;
+                }
             }
             if (scrollable.scrollForward())
-            transactionsIndex =0;
+                transactionsIndex =0;
             else break;
-        } while(scrollable.isScrollable());
+        } while(scrollable.isScrollable()&&counter>0);
 
         //After check of every transaction we will choose another account and do the same thing again
-
         topBarFilerIcon.click();
         filterProductsBtn.click();
         productPersonalGBP.click();
@@ -621,29 +655,47 @@ public class SecondFlow {
             + USD_PERSONAL_NUMBER.replace(" ","").substring(12,16) + " "
             + USD_PERSONAL_NUMBER.replace(" ","").substring(16,20) + " "
             + USD_PERSONAL_NUMBER.replace(" ","").substring(20);
+        int counter1 = 2;
         do{
-        while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
-            UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
-            onTransactionClick.click();
-            try {
-                UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
-                        .text(FORMATED_ACC_NUMBER_USD));
-                ibanField.isEnabled();
-                mDevice.pressKeyCode(0x00000004);
-                ++transactionsIndex;
-            } catch (UiObjectNotFoundException e) {
-                UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
-                        .text(FORMATED_ACC_NUMBER_USD));
-                ibanField.isEnabled();
-
-                mDevice.pressKeyCode(0x00000004);
-                ++transactionsIndex;
+            while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
+                UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
+                onTransactionClick.click();
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                    UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_from")
+                            .text(FORMATED_ACC_NUMBER_USD));
+                    ibanField.isEnabled();
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                } catch (UiObjectNotFoundException e) {
+                    TimeUnit.SECONDS.sleep(1);
+                    try {
+                        UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                                .text(FORMATED_ACC_NUMBER_USD));
+                        ibanField.isEnabled();
+                    } catch (UiObjectNotFoundException a){
+                        try{
+                            TimeUnit.SECONDS.sleep(3);
+                            UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                                    .text(FORMATED_ACC_NUMBER_USD));
+                            ibanField.isEnabled();
+                        }catch(UiObjectNotFoundException r){
+                            onTransactionClick.click();
+                            TimeUnit.SECONDS.sleep(2);
+                            UiObject ibanField = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_account_number_to")
+                                    .text(FORMATED_ACC_NUMBER_USD));
+                            ibanField.isEnabled();
+                        }
+                    }
+                    mDevice.pressKeyCode(0x00000004);
+                    ++transactionsIndex;
+                    --counter1;
+                }
             }
-        }
-        if (scrollable.scrollForward())
-            transactionsIndex =0;
-        else break;
-        } while(scrollable.isScrollable());
+            if (scrollable.scrollForward())
+                transactionsIndex =0;
+            else break;
+        } while(scrollable.isScrollable()&&counter1>0);
             topBarFilerIcon.click();
             filterProductsBtn.click();
             productPersonalUSD.click();
@@ -660,6 +712,32 @@ public class SecondFlow {
     //Next we will test date filter
     @Test
     public void test6() throws Exception {
+
+        UiObject toolbarTitle = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
+        try{
+            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        } catch( UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            assertThat(DASHBOARD_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+        }
+
+        //Transactions screen
+        UiObject transactionBottomMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_transactions"));
+        transactionBottomMenu.click();
+
+        TimeUnit.SECONDS.sleep(3);
+        try{
+            assertThat(TRANSACTIONS_BAR_TITLE, is(equalTo(toolbarTitle.getText())));
+            toolbarTitle.isFocusable();
+        } catch (UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            toolbarTitle.isFocusable();
+        }
+
+        //Filters screen
+        UiObject topBarFilerIcon = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/menu_filter"));
+        topBarFilerIcon.click();
+        TimeUnit.SECONDS.sleep(1);
 
         //Get dates for each of the filters (1M, 3M, 6M, 12M)
         Calendar cal = Calendar.getInstance();
@@ -686,7 +764,6 @@ public class SecondFlow {
         String date12M = format.format(cal.getTime()).toUpperCase();
         Date date12MD = format.parse(date12M);
 
-        UiObject topBarFilerIcon = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/menu_filter"));
         UiObject filterProductsBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/iv_filter_product_arrow"));
         UiObject filterDate1M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_1m"));
         UiObject filterDate3M = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_3m"));
@@ -696,7 +773,6 @@ public class SecondFlow {
         UiObject filterDateOtherFrom = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_from_content"));
         UiObject calendarNextIcon = mDevice.findObject(new UiSelector().resourceId("android:id/next"));
         UiObject filterDateOtherTo = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_date_to_content"));
-        UiObject toolbarTitle = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
         UiObject calendarOK = mDevice.findObject(new UiSelector().resourceId("android:id/button1"));
         UiObject filterFundsIncoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_incoming"));
         UiObject filterFundsOutcoming = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/cb_radio_outcoming"));
@@ -1037,7 +1113,7 @@ public class SecondFlow {
         UiObject typePlanned = mDevice.findObject(new UiSelector().text("Planned"));
         UiObject typeBlockades = mDevice.findObject(new UiSelector().text("Blockades"));
         UiObject btnFilter = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_filter"));
-        int transactionsIndex = 1;
+
         filterTransType.click();
 
         //Firstly we will check if all necessary options exists
@@ -1048,8 +1124,6 @@ public class SecondFlow {
         typeTransfers.exists();
         typePlanned.exists();
 
-
-
         // Filter check for transactions with transfer type
         typeTransfers.click();
         btnFilter.click();
@@ -1057,7 +1131,7 @@ public class SecondFlow {
         do {
             List<UiObject2> titles = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_transaction_name"));
             for (int i = 0; i < titles.size(); i++) {
-                if (titles.get(i).getText().equals("Own transfer")){
+                if (titles.get(i).getText().equals("Own transfer")||titles.get(i).getText().equals("Blockade")){
                     Log.i("Transaction title", "is Ok");
                 } else {
                     throw new Exception("Wrong transaction title");
@@ -1077,7 +1151,7 @@ public class SecondFlow {
         typePayments.click();
         btnFilter.click();
         showResultBtn.click();
-
+        int transactionsIndex = 1;
         do {
             while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
                 UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
@@ -1088,13 +1162,13 @@ public class SecondFlow {
                     transactionTypeContent.exists();
                     assertThat(transactionTypeContent.getText(), is(equalTo(PAYMENT_BAR_TITLE)));
                     mDevice.pressKeyCode(0x00000004);
-                    ++transactionsIndex;
+                    transactionsIndex++;
                     } catch (UiObjectNotFoundException e) {
                     TimeUnit.SECONDS.sleep(1);
                     transactionTypeContent.exists();
                     assertThat(transactionTypeContent.getText(), is(equalTo(PAYMENT_BAR_TITLE)));
                     mDevice.pressKeyCode(0x00000004);
-                    ++transactionsIndex;
+                    transactionsIndex++;
                     }
             }
             transactionsIndex =0;
@@ -1106,20 +1180,15 @@ public class SecondFlow {
 
 
 
-        // Check transaction type for fees
 
+        // Check transaction type for fees
+        transactionsIndex = 1;
         typeFees.click();
         btnFilter.click();
         showResultBtn.click();
         TimeUnit.SECONDS.sleep(2);
-        do {
-            while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
-                //TimeUnit.SECONDS.sleep(2);
-                UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
-                //UiObject test = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_transaction_date"));
-                onTransactionClick.click();
-
-
+        UiObject onFeeTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
+        onFeeTransactionClick.click();
                 TimeUnit.SECONDS.sleep(2);
                 scrollTransactionDetails.scrollForward();
                 try {
@@ -1134,9 +1203,6 @@ public class SecondFlow {
                     mDevice.pressKeyCode(0x00000004);
                     ++transactionsIndex;
                 }
-            }
-            transactionsIndex =0;
-        } while(scrollable.scrollForward());
 
         topBarFilerIcon.click();
         filterTransType.click();
@@ -1147,12 +1213,11 @@ public class SecondFlow {
         typeBlockades.click();
         btnFilter.click();
         showResultBtn.click();
+        transactionsIndex=1;
         TimeUnit.SECONDS.sleep(2);
-        do {
-            while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
-                UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
+                UiObject onLockedTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
                 TimeUnit.SECONDS.sleep(2);
-                onTransactionClick.click();
+        onLockedTransactionClick.click();
                 TimeUnit.SECONDS.sleep(2);
                 scrollTransactionDetails.scrollForward();
                 try {
@@ -1170,9 +1235,9 @@ public class SecondFlow {
                     mDevice.pressKeyCode(0x00000004);
                     ++transactionsIndex;
                 }
-            }
-            transactionsIndex =0;
-        } while(scrollable.scrollForward());
+
+            transactionsIndex =1;
+
 
         topBarFilerIcon.click();
 
@@ -1184,6 +1249,7 @@ public class SecondFlow {
         showResultBtn.click();
         do {
             while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
+                TimeUnit.SECONDS.sleep(1);
                 UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));
                 onTransactionClick.click();
                 TimeUnit.SECONDS.sleep(2);
@@ -1213,6 +1279,7 @@ public class SecondFlow {
         btnFilter.click();
         showResultBtn.click();
         TimeUnit.SECONDS.sleep(2);
+        transactionsIndex=1;
         do {
             while(mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex)).exists()){
                 UiObject onTransactionClick = mDevice.findObject(new UiSelector().className("android.view.ViewGroup").index(transactionsIndex));

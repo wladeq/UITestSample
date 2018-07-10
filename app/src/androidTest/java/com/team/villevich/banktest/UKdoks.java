@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
-public class UKdoks {
+public class
+UKdoks {
     static String passportNumber;
     static int [] weight ={7,3,1,7,3,1,7,3,1};
     static int [] number = new int[9];
