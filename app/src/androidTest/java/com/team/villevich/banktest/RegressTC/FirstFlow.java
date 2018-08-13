@@ -5,6 +5,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 
 import org.junit.Before;
@@ -27,6 +28,17 @@ import static org.junit.Assert.assertThat;
 
 public class FirstFlow {
     private UiDevice mDevice;
+    private String WELCOME_MSG = "Welcome to Golden Sand Bank.\n" +
+            "To start activation process\n" +
+            "enter your login.",
+            LOGIN = "testvideo",
+            DASHBOARD_BAR_TITLE = "GOLDEN SAND BANK",
+    //Title of start screen
+    LOCKEDAPP_MES = "Your Golden Sand Bank\n" +
+            "application is locked",
+            GET_STARTED_MES ="Get started now",
+            ENTER_PASSCODE_MES = "Enter your passcode";
+
     //TEXT TO COMPARE WITH UI ELEMENTS
     private String CANCEL_BUTTON = "CANCEL",
             VV_BAR_TITLE = "VIDEO VERIFICATION",
@@ -44,9 +56,7 @@ public class FirstFlow {
             KLIENT_LOGIN = "user9595",
             LOGIN_ENTER_PASSCODE = "Enter your passcode",
             LOGIN_FAILED_ALERT = "Login failed",
-            APP_LOCKED_ALERT = "App Locked",
-            LOCKED_APP_TEXT = "Your Golden Sand Bank\n" +
-                    "application is locked";
+            APP_LOCKED_ALERT = "App Locked";
 
     @Before
     public void startMainActivityFromHomeScreen() {
@@ -55,261 +65,31 @@ public class FirstFlow {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     }
 
-    //LOGIN ON EXISTING USER WITH ACTIVE VV
-    //@Test
-    public void loginMethod() throws UiObjectNotFoundException, InterruptedException {
-        mDevice.pressHome();
-        UiObject appButton1 = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
-        appButton1.click();
-        TimeUnit.SECONDS.sleep(6);
-        try {
-            UiObject loginBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_login"));
-            loginBtn.click();
-        } catch(UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(6);
-            UiObject loginBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_login"));
-            loginBtn.click();
-        }
-        UiObject loginInput = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/passcode_EditText"));
-        loginInput.setText(KLIENT_LOGIN);
-        UiObject next = mDevice.findObject(new UiSelector().textMatches("NEXT STEP"));
-        next.click();
-
-        mDevice.pressHome();
-        UiObject messages = mDevice.findObject(new UiSelector().textMatches("Wiadomości"));
-        messages.click();
-        TimeUnit.SECONDS.sleep(2);
-        UiObject messages1 = mDevice.findObject(new UiSelector().textContains("Golden Sand").className("android.widget.TextView"));
-        messages1.click();
-        TimeUnit.SECONDS.sleep(3);
-        mDevice.click(529,964);
-
-        String copyText = null;
-        try {
-            UiObject codeField = mDevice.findObject(new UiSelector().resourceId("android:id/alertTitle"));
-            copyText = codeField.getText();
-        } catch (UiObjectNotFoundException e) {
-            TimeUnit.SECONDS.sleep(1);
-            mDevice.click(529,964);
-            UiObject codeField = mDevice.findObject(new UiSelector().resourceId("android:id/alertTitle"));
-            copyText = codeField.getText();
-        }
-
-        mDevice.pressHome();
-        UiObject appButton = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
-        appButton.click();
-        TimeUnit.SECONDS.sleep(1);
-
-        UiObject smsCodeView = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/passcode_EditText"));
-        smsCodeView.setText(copyText);
-        TimeUnit.SECONDS.sleep(1);
-
-        UiObject next2 = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_next"));
-        next2.click();
-
-        TimeUnit.SECONDS.sleep(1);
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000094);
-        mDevice.pressKeyCode(0x00000094);
-
-        TimeUnit.SECONDS.sleep(1);
-
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000094);
-        mDevice.pressKeyCode(0x00000094);
-
-        mDevice.pressBack();
-
-        UiObject login = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_next"));
-        login.click();
-        TimeUnit.SECONDS.sleep(3);
-
-    }
-
-    //LON-83
     @Test
     public void test1() throws UiObjectNotFoundException, InterruptedException {
-
         mDevice.pressHome();
         try {
             UiObject appButton1 = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
-            appButton1.click();
-            } catch (UiObjectNotFoundException e){
+            appButton1.clickAndWaitForNewWindow();
+        } catch (UiObjectNotFoundException e){
             mDevice.pressHome();
             UiObject appButton1 = mDevice.findObject(new UiSelector().text("Golden Sand Bank"));
-            appButton1.click();
+            appButton1.clickAndWaitForNewWindow();
         }
-        TimeUnit.SECONDS.sleep(6);
-        try {
-            UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-            assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
+        TimeUnit.SECONDS.sleep(8);
 
-        } catch(UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(6);
-            UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-            assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
-        }
-        TimeUnit.SECONDS.sleep(1);
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000094);
-        mDevice.pressKeyCode(0x00000094);
+        // There are different types of first screen we will detect current,
+        // and use suitable type of interaction
+        UiObject startMessageOption1 = mDevice.findObject(new UiSelector().text(GET_STARTED_MES));
+        UiObject startMessageOption2 = mDevice.findObject(new UiSelector().text(LOCKEDAPP_MES));
+        if (startMessageOption1.exists()){
+            UiObject loginBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_login"));
+            loginBtn.click();
 
-    }
-
-    //Test VV LON-83, Test poprawnego logowania
-    //@Test
-    public void test2() throws UiObjectNotFoundException, InterruptedException {
-
-        //Text check
-
-            UiObject titleId = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_title"));
-            UiObject titleBody = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_content"));
-            UiObject okBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
-            UiObject cancelBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultNegative"));
-            try {
-
-            assertThat(CONFIRM_IT_TITLE, is(equalTo(titleId.getText())));
-            assertThat(CONFIRM_ID_BODY, is(equalTo(titleBody.getText())));
-            assertThat(OK_BUTTON, is(equalTo(okBtn.getText())));
-            assertThat(CANCEL_BUTTON, is(equalTo(cancelBtn.getText())));
-            } catch (UiObjectNotFoundException e){
-                TimeUnit.SECONDS.sleep(1);
-                assertThat(CONFIRM_IT_TITLE, is(equalTo(titleId.getText())));
-                assertThat(CONFIRM_ID_BODY, is(equalTo(titleBody.getText())));
-                assertThat(OK_BUTTON, is(equalTo(okBtn.getText())));
-                assertThat(CANCEL_BUTTON, is(equalTo(cancelBtn.getText())));
-            }
-
-        //FIRST PART OF TC - •	START VIDEO CHAT NOW - rozpoczyna proces weryfikacji użytkownika
-        //BEFORE START VV ACTIVITY CHECK
-        okBtn.click();
-        UiObject vvBarTitle = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/toolbar_title"));
-        UiObject vvStartBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_video_call"));
-        UiObject vvLaterBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_cancel_verification"));
-        UiObject vvBody = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_video_verification_hint_1"));
-        assertThat(VV_BAR_TITLE, is(equalTo(vvBarTitle.getText())));
-        assertThat(VV_START_CALL_BUTTON, is(equalTo(vvStartBtn.getText())));
-        assertThat(DO_LATER_BUTTON, is(equalTo(vvLaterBtn.getText())));
-        assertThat(VV_BODY, is(equalTo(vvBody.getText())));
-
-        //AFTER START VV CHECK
-        vvStartBtn.click();
-        TimeUnit.SECONDS.sleep(4);
-        UiObject checkConditions = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/verification_header_text"));
-        assertThat(CHECK_CONDITION, is(equalTo(checkConditions.getText())));
-        TimeUnit.SECONDS.sleep(5);
-
-        try{
-            UiObject disconntectBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/button_disconnect_text"));
-            disconntectBtn.click();
-        } catch (UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(3);
-            UiObject disconntectBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/button_disconnect_text"));
-            disconntectBtn.click();
-        }
-        try{
-            UiObject confirmBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/button_disconnect_confirm"));
-            confirmBtn.click();
-        } catch (UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(1);
-            UiObject confirmBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/button_disconnect_confirm"));
-            confirmBtn.click();
-        }
-
-        //TEMPORARY PART !! REWRITE AFTER REPAIR !!
-        UiObject backToLogin = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_login"));
-        backToLogin.click();
-
-        //SECOND TC STEP
-        // I'll do it later - przenosi do ekranu "8.0 Dashboard/Home", "8.3 Dashboard DEMO"
-        //SECOND LOGIN
-        try {
-            TimeUnit.SECONDS.sleep(3);
-            UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-            assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
-
-        } catch(UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(4);
-            UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-            assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
-        }
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000091);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000092);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000093);
-        mDevice.pressKeyCode(0x00000094);
-        mDevice.pressKeyCode(0x00000094);
-        //AFTER LOGIN, DASHBOARD CHECK
-        try {
-
-            assertThat(CONFIRM_IT_TITLE, is(equalTo(titleId.getText())));
-            assertThat(CONFIRM_ID_BODY, is(equalTo(titleBody.getText())));
-            assertThat(OK_BUTTON, is(equalTo(okBtn.getText())));
-            assertThat(CANCEL_BUTTON, is(equalTo(cancelBtn.getText())));
-        } catch (UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(1);
-            assertThat(CONFIRM_IT_TITLE, is(equalTo(titleId.getText())));
-            assertThat(CONFIRM_ID_BODY, is(equalTo(titleBody.getText())));
-            assertThat(OK_BUTTON, is(equalTo(okBtn.getText())));
-            assertThat(CANCEL_BUTTON, is(equalTo(cancelBtn.getText())));
-        }
-        //PRESS OK
-        okBtn.click();
-        //BEFORE START VV ACTIVITY CHECK
-        assertThat(VV_BAR_TITLE, is(equalTo(vvBarTitle.getText())));
-        assertThat(VV_START_CALL_BUTTON, is(equalTo(vvStartBtn.getText())));
-        assertThat(DO_LATER_BUTTON, is(equalTo(vvLaterBtn.getText())));
-        assertThat(VV_BODY, is(equalTo(vvBody.getText())));
-        vvLaterBtn.click();
-        try {
-            UiObject demoAppBar = mDevice.findObject(new UiSelector().text("DEMO APP. VERIFY YOUR ACCOUNT TO GET FULL ACCESS.").index(1));
-            demoAppBar.isFocusable();
-        }catch (UiObjectNotFoundException e){
-            TimeUnit.SECONDS.sleep(2);
-            UiObject demoAppBar = mDevice.findObject(new UiSelector().text("DEMO APP. VERIFY YOUR ACCOUNT TO GET FULL ACCESS.").index(1));
-            demoAppBar.isFocusable();
-        }
-        UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_menu"));
-        sideMenu.click();
-        UiObject logOut = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/iv_logout"));
-        logOut.click();
-        UiObject logOutOK = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
-        logOutOK.click();
-        TimeUnit.SECONDS.sleep(3);
-    }
-
-    //LON-19 Test blokowania aplikacji
-    //@Test
-    public void test3() throws UiObjectNotFoundException, InterruptedException {
-
-        //Pętła niepoprawnych passcodów do blokowania appki
-        for(int i = 0; i <2;i++) {
-            try {
-                UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-                assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
-
-            } catch (UiObjectNotFoundException e) {
-                TimeUnit.SECONDS.sleep(4);
-                UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-                assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
-            }
+        }else if (startMessageOption2.exists()){
+            UiObject unlockBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_unlock"));
+            unlockBtn.click();
+        } else {
             mDevice.pressKeyCode(0x00000091);
             mDevice.pressKeyCode(0x00000091);
             mDevice.pressKeyCode(0x00000092);
@@ -317,33 +97,117 @@ public class FirstFlow {
             mDevice.pressKeyCode(0x00000093);
             mDevice.pressKeyCode(0x00000093);
             mDevice.pressKeyCode(0x00000094);
-            mDevice.pressKeyCode(0x00000093);
-
-            try {
-                TimeUnit.SECONDS.sleep(2);
-                UiObject loginFailedTv = mDevice.findObject(new UiSelector().text("Login failed"));
-                assertThat(LOGIN_FAILED_ALERT, is(equalTo(loginFailedTv.getText())));
-
-            } catch (UiObjectNotFoundException e) {
-                TimeUnit.SECONDS.sleep(2);
-                UiObject loginFailedTv = mDevice.findObject(new UiSelector().text("Login failed"));
-                assertThat(LOGIN_FAILED_ALERT, is(equalTo(loginFailedTv.getText())));
-            }
-            UiObject okBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
-            okBtn.click();
+            mDevice.pressKeyCode(0x00000094);
         }
 
+    }
+
+    //First login to app
+    @Test
+    public void test2() throws UiObjectNotFoundException, InterruptedException {
+        String smsCode;
+
+
+        UiObject welcomeMessage = mDevice.findObject(new UiSelector().text(WELCOME_MSG));
         try {
-            UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-            assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
+            TimeUnit.SECONDS.sleep(1);
+            welcomeMessage.isFocusable();
 
-        } catch (UiObjectNotFoundException e) {
-            TimeUnit.SECONDS.sleep(4);
-            UiObject passcodeTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
-            assertThat(LOGIN_ENTER_PASSCODE, is(equalTo(passcodeTV.getText())));
+        } catch(UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(2);
+            welcomeMessage.isFocusable();
         }
 
-        //Tezecia próba z innym pop-upem
+        UiObject loginView = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/passcode_EditText"));
+        loginView.setText(LOGIN);
+        UiObject nextStepBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_next"));
+        try {
+            nextStepBtn.click();
+
+        } catch(UiObjectNotFoundException e){
+            TimeUnit.SECONDS.sleep(1);
+            nextStepBtn.click();
+        }
+        UiObject smsCodeView =mDevice.findObject(new UiSelector().resourceId("net.everythingandroid.smspopup:id/smsCode"));
+        do{
+            TimeUnit.SECONDS.sleep(1);
+        }
+        while(!smsCodeView.isEnabled());
+        smsCode = smsCodeView.getText().substring(1);
+        mDevice.pressBack();
+        UiObject smsCodeET =mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/passcode_EditText"));
+        smsCodeET.setText(smsCode);
+        nextStepBtn.click();
+
+        UiObject passcodeReq =mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_security_req"));
+        passcodeReq.click();
+        TimeUnit.SECONDS.sleep(1);
+        mDevice.pressBack();
+        TimeUnit.SECONDS.sleep(1);
+
+        UiObject clickPasscode =mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/passcode_EditText"));
+        clickPasscode.click();
+
+        for(int i=0; i<2;i++){
+            TimeUnit.SECONDS.sleep(1);
+            mDevice.pressKeyCode(0x00000091);
+            mDevice.pressKeyCode(0x00000091);
+            mDevice.pressKeyCode(0x00000092);
+            mDevice.pressKeyCode(0x00000092);
+            mDevice.pressKeyCode(0x00000093);
+            mDevice.pressKeyCode(0x00000093);
+            mDevice.pressKeyCode(0x00000094);
+            mDevice.pressKeyCode(0x00000094);
+        }
+        UiScrollable scrollable = new UiScrollable(new UiSelector().className("android.widget.ScrollView"));
+        scrollable.scrollForward();
+
+        UiObject finishLoginBtn =mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_next"));
+        finishLoginBtn.click();
+        TimeUnit.SECONDS.sleep(1);
+
+    }
+
+    @Test
+    public void test3() throws UiObjectNotFoundException, InterruptedException {
+        UiObject okBtn =mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
+        okBtn.click();
+        TimeUnit.SECONDS.sleep(1);
+        UiObject doLater =mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_cancel_verification"));
+        doLater.click();
+        TimeUnit.SECONDS.sleep(1);
+        UiObject sideMenu = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tab_menu"));
+        try {
+            sideMenu.click();
+        } catch (UiObjectNotFoundException e) {
+            TimeUnit.SECONDS.sleep(1);
+            sideMenu.click();
+        }
+        UiObject logout = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/iv_logout"));
+        try {
+            logout.click();
+        } catch (UiObjectNotFoundException e) {
+            TimeUnit.SECONDS.sleep(1);
+            logout.click();
+        }
+        UiObject positiveLogout = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
+        try {
+            positiveLogout.click();
+        } catch (UiObjectNotFoundException e) {
+            TimeUnit.SECONDS.sleep(1);
+            positiveLogout.click();
+        }
+        TimeUnit.SECONDS.sleep(3);
+
+        UiObject checkLogin = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/tv_passcode_hint"));
+        try {
+            checkLogin.isEnabled();
+        } catch (UiObjectNotFoundException e) {
+            TimeUnit.SECONDS.sleep(2);
+            checkLogin.isEnabled();
+        }
+
+        //Block app
         mDevice.pressKeyCode(0x00000091);
         mDevice.pressKeyCode(0x00000091);
         mDevice.pressKeyCode(0x00000092);
@@ -351,29 +215,52 @@ public class FirstFlow {
         mDevice.pressKeyCode(0x00000093);
         mDevice.pressKeyCode(0x00000093);
         mDevice.pressKeyCode(0x00000094);
+        mDevice.pressKeyCode(0x00000092);
+        TimeUnit.SECONDS.sleep(2);
+        UiObject failedPinOk = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
+        try {
+            failedPinOk.click();
+        } catch (UiObjectNotFoundException e) {
+            TimeUnit.SECONDS.sleep(1);
+            failedPinOk.click();
+        }
+        TimeUnit.SECONDS.sleep(1);
+
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000092);
+        mDevice.pressKeyCode(0x00000092);
         mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000094);
+        mDevice.pressKeyCode(0x00000092);
+        TimeUnit.SECONDS.sleep(2);
         try {
-            UiObject appLockedTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_title"));
-            assertThat(APP_LOCKED_ALERT, is(equalTo(appLockedTV.getText())));
-
+            failedPinOk.click();
         } catch (UiObjectNotFoundException e) {
-            TimeUnit.SECONDS.sleep(2);
-            UiObject appLockedTV = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_title"));
-            assertThat(APP_LOCKED_ALERT, is(equalTo(appLockedTV.getText())));
+            TimeUnit.SECONDS.sleep(1);
+            failedPinOk.click();
         }
-        UiObject okBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/md_buttonDefaultPositive"));
+        TimeUnit.SECONDS.sleep(1);
 
-        //Sprawdzenie, czy został wyświetłony ekran zablokowanej appki
-        okBtn.click();
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000091);
+        mDevice.pressKeyCode(0x00000092);
+        mDevice.pressKeyCode(0x00000092);
+        mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000093);
+        mDevice.pressKeyCode(0x00000094);
+        mDevice.pressKeyCode(0x00000092);
+        TimeUnit.SECONDS.sleep(2);
         try {
-            TimeUnit.SECONDS.sleep(5);
-            UiObject appAfterLockTV = mDevice.findObject(new UiSelector().text(LOCKED_APP_TEXT));
-            appAfterLockTV.isFocusable();
-
+            failedPinOk.click();
         } catch (UiObjectNotFoundException e) {
-            TimeUnit.SECONDS.sleep(2);
-            UiObject appAfterLockTV = mDevice.findObject(new UiSelector().text(LOCKED_APP_TEXT));
-            appAfterLockTV.isFocusable();
+            TimeUnit.SECONDS.sleep(1);
+            failedPinOk.click();
         }
+        TimeUnit.SECONDS.sleep(1);
+
+
+
     }
 }

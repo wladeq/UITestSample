@@ -1,4 +1,4 @@
-package com.github.chagall.notificationlistenerexample;
+package com.team.villevich.banktest;
 
 import android.content.Intent;
 import android.os.IBinder;

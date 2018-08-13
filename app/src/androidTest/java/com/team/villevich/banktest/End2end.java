@@ -458,11 +458,9 @@ public class End2end {
         UiObject okBtn = mDevice.findObject(new UiSelector().resourceId("com.ailleron.longbank.gtest:id/btn_dialog_ok"));
         okBtn.click();
         TimeUnit.SECONDS.sleep(1);
-
     }
     public static String generateString() {
         String uuid = UUID.randomUUID().toString();
         return uuid.replaceAll("[0-9]","").replaceAll("-","");
     }
-
 }
