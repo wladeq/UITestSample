@@ -19,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -116,6 +115,8 @@ public class SecondFlow {
         UiObject2 elementPersonal = mDevice.wait(Until.findObject(By.text("SHOW MORE")),3000);
         elementPersonal.isEnabled();
         mDevice.swipe(0,720,720,720,20);
+        List<UiObject2> linearLayoutsContainer = mDevice.findObjects(By.text("PERSONAL ACCOUNTS"));
+
         List<UiObject2> personalAccIbansList = mDevice.findObjects(By.res("com.ailleron.longbank.gtest:id/tv_subtitle"));
         for (int i = 0; i < personalAccIbansList.size(); i++) {
             personalAccIbans.add(personalAccIbansList.get(i).getText());
